@@ -3,6 +3,7 @@ import time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 import config
 
@@ -13,6 +14,7 @@ SERVICE = Service(CHROME_DRIVER_PATH)
 TWITTER_EMAIL = config.twitter_email
 TWITTER_PASSWORD = config.twitter_password
 SPEEDTEST_URL = "https://www.speedtest.net/result/13762499492"
+TWITTER_URL = "https://twitter.com/login/"
 
 
 class InternetSpeedTwitterBot:
@@ -38,7 +40,36 @@ class InternetSpeedTwitterBot:
         print(f"up: {self.down}")
 
     def tweet_at_provider(self):
-        pass
+        self.driver_path.get(TWITTER_URL)
+
+        time.sleep(10)
+        twitter_username = self.driver_path.find_element(by=By.NAME, value='text')
+        twitter_username.send_keys(TWITTER_EMAIL)
+        twitter_username.send_keys(Keys.ENTER)
+
+        time.sleep(5)
+        twitter_password = self.driver_path.find_element(by=By.NAME, value='password')
+        twitter_password.send_keys(TWITTER_PASSWORD)
+        twitter_password.send_keys(Keys.ENTER)
+
+        # tweet
+        time.sleep(10)
+        tweet_compose = self.driver_path.find_element(
+            by=By.CSS_SELECTOR,
+            value='.DraftEditor-editorContainer div')
+
+        tweet = f"Hey Internet Provider, why is my internet speed {self.down}down/{self.up}up when I pay for {PROMISED_DOWN}down/{PROMISED_UP}up?"
+
+        tweet_compose.send_keys(tweet)
+        time.sleep(3)
+
+        tweet_button = self.driver_path.find_element(
+            by=By.XPATH,
+            value=
+            "//*[text()='Tweet']")
+        tweet_button.click()
+
+        self.driver_path.quit()
 
 
 bot = InternetSpeedTwitterBot(SERVICE)
